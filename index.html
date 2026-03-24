@@ -2,198 +2,344 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-
-<!-- ✅ สำคัญมาก: ทำให้รองรับมือถือ -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>AI Health Symptom Risk Checker</title>
+<title>AI Health System</title>
 
 <style>
+
+*{
+box-sizing:border-box;
+font-family:'Segoe UI',Arial;
+}
+
 body{
-    margin:0;
-    min-height:100vh;
-    font-family:"Segoe UI", sans-serif;
-    background:linear-gradient(135deg,#74ebd5,#9face6);
-
-    /* ✅ จัดกลางจอ */
-    display:flex;
-    justify-content:center;
-    align-items:center;
+margin:0;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#7f1d1d);
+background-size:400% 400%;
+animation:bgMove 12s ease infinite;
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
 }
 
+@keyframes bgMove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
 
-/* ===== กล่องหลัก ===== */
 .container{
-    width:100%;
-    max-width:480px;
-    background:#fff;
-    padding:30px;
-    border-radius:18px;
-    box-shadow:0 10px 30px rgba(0,0,0,.2);
+width:100%;
+max-width:950px;
+background:rgba(2,6,23,0.85);
+backdrop-filter:blur(14px);
+padding:40px;
+border-radius:20px;
+box-shadow:0 0 40px rgba(0,0,0,0.7);
 }
 
+h1{
+margin-bottom:30px;
+font-size:30px;
+background:linear-gradient(90deg,#38bdf8,#ef4444);
 
-h1{text-align:center;margin-bottom:5px;}
-.subtitle{text-align:center;color:#666;margin-bottom:20px;}
+-webkit-background-clip:text;
+-webkit-text-fill-color: transparent;   /* 🔥 เพิ่มตัวนี้ */
+background-clip:text;
 
-label{
-    font-weight:bold;
-    display:block;
-    margin-top:15px;
+color:transparent;
 }
 
-input, textarea{
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    margin-top:5px;
-    font-size:15px;
+input,select,textarea{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:none;
+background:#0f172a;
+color:white;
 }
 
 button{
-    width:100%;
-    margin-top:20px;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#6a82fb;
-    color:#fff;
-    font-size:16px;
-    cursor:pointer;
+padding:12px 20px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,#3b82f6,#ef4444);
+color:white;
+cursor:pointer;
 }
 
-button:hover{background:#5a72e5;}
-
-.result{
-    margin-top:20px;
-    padding:15px;
-    border-radius:10px;
-    background:#f3f6ff;
+/* result */
+.result-box{
+margin-top:20px;
+padding:20px;
+border-radius:18px;
+background:rgba(2,6,23,0.9);
+border:1px solid rgba(255,255,255,0.08);
 }
 
-.warning{
-    margin-top:15px;
-    font-size:12px;
-    color:red;
-    text-align:center;
+.result-container{
+display:grid;
+gap:15px;
 }
 
-hr{border:none;border-top:1px solid #ddd;}
-
-/* ===== 📱 มือถือจอเล็ก ===== */
-@media (max-width: 480px){
-    .container{
-        margin:20px;
-        padding:20px;
-        border-radius:14px;
-    }
-
-    h1{
-        font-size:20px;
-    }
-
-    .subtitle{
-        font-size:14px;
-    }
-
-    button{
-        font-size:15px;
-        padding:10px;
-    }
-
-    input, textarea{
-        font-size:14px;
-    }
+.card{
+padding:15px;
+border-radius:12px;
+color:white;
 }
+
+.title{background:linear-gradient(90deg,#6366f1,#8b5cf6);}
+.disease{background:linear-gradient(90deg,#ef4444,#dc2626);}
+.severity{background:linear-gradient(90deg,#f59e0b,#d97706);}
+.cause{background:linear-gradient(90deg,#3b82f6,#1d4ed8);}
+.advice{background:linear-gradient(90deg,#10b981,#059669);}
+.care{background:linear-gradient(90deg,#0ea5e9,#0284c7);}
+.ref{background:linear-gradient(90deg,#8b5cf6,#6d28d9);}
+
+/* chat */
+.chatbox{
+margin-top:40px;
+background:#020617;
+padding:25px;
+border-radius:15px;
+}
+
+.chat-input{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.chat-input input{
+flex:1;
+}
+
+.chat-message{
+margin-top:10px;
+padding:10px;
+border-radius:10px;
+background:#0f172a;
+}
+
+.ai{border-left:4px solid red;}
+.user{border-left:4px solid blue;}
+
+#chatResult{
+max-height:300px;
+overflow-y:auto;
+}
+
 </style>
 </head>
 
 <body>
+
 <div class="container">
-    <h1>🧠 AI Health Symptom Risk Checker Application</h1>
-    <p class="subtitle">ระบบประเมินความเสี่ยงสุขภาพด้วย AI (เบื้องต้น)</p>
 
-    <label>อายุ</label>
-    <input type="number" id="age" placeholder="กรอกอายุ">
+<h1>🧠 AI Medical Diagnosis</h1>
 
-    <label>อาการที่เป็น (พิมพ์อธิบาย)</label>
-    <textarea id="extraSymptoms" rows="4" placeholder="เช่น ไข้ ไอ ปวดหัว แน่นหน้าอก"></textarea>
+<input id="name" placeholder="ชื่อ">
+<input id="age" type="number" placeholder="อายุ">
 
-    <button onclick="checkRisk()">ค้นหาโรค</button>
+<select id="gender">
+<option value="">เพศ</option>
+<option>ชาย</option>
+<option>หญิง</option>
+</select>
 
-    <div id="result" class="result"></div>
+<textarea id="symptoms" placeholder="อาการ เช่น ปัสสาวะบ่อย,กระหายน้ำ"></textarea>
 
-    <div class="warning">
-        ⚠ ระบบนี้เป็นเพียงการประเมินเบื้องต้น ไม่สามารถใช้แทนการวินิจฉัยของแพทย์ได้
-    </div>
+<button onclick="analyze()">🔍 วิเคราะห์</button>
+
+<div id="result"></div>
+
+<!-- CHAT -->
+<div class="chatbox">
+
+<h2>💬 AI Chat</h2>
+
+<div id="chatResult"></div>
+
+<div class="chat-input">
+<input id="chatInput">
+<button onclick="sendChat()">ส่ง</button>
+</div>
+
+</div>
+
 </div>
 
 <script>
-// ===== ฐานข้อมูลโรค =====
-const diseases = [
-  {
-    disease: "โรคเบาหวาน",
-    keywords: ["ปัสสาวะบ่อย","กระหายน้ำ","หิวบ่อย","น้ำหนักลด","แผลหายช้า","ชาปลายมือ","ชาปลายเท้า"],
-    care: ["ควบคุมอาหาร","ออกกำลังกาย","ตรวจน้ำตาล"],
-    risk: ["ไตเสื่อม","โรคหัวใจ"],
-    reference: "รามาธิบดี"
-  },
-  {
-    disease: "โรคความดันโลหิตสูง",
-    keywords: ["ปวดหัว","ปวดท้ายทอย","เวียนหัว","หน้ามืด","แน่นหน้าอก"],
-    care: ["ลดเค็ม","ออกกำลังกาย","วัดความดัน"],
-    risk: ["โรคหลอดเลือดสมอง","หัวใจวาย"],
-    reference: "ศิริราช"
-  },
-  {
-    disease: "โรคพยาธิใบไม้ตับ",
-    keywords: ["ปวดชายโครงขวา","ตัวเหลือง","ตาเหลือง","ท้องอืด","คัน"],
-    care: ["งดปลาดิบ","ตรวจพยาธิ","พบแพทย์"],
-    risk: ["ตับแข็ง","มะเร็งท่อน้ำดี"],
-    reference: "กรมควบคุมโรค"
-  }
-];
 
-// ===== ฟังก์ชันประเมิน =====
-function checkRisk(){
-  const age = parseInt(document.getElementById("age").value || 0);
-  const text = document.getElementById("extraSymptoms").value.toLowerCase();
-  let html = `<h3>ผลการประเมิน</h3>`;
+let chatHistory = []
+let summary = ""
 
-  if(!text){
-    document.getElementById("result").innerHTML = html + `<p>กรุณาพิมพ์อาการอย่างน้อย 1 อย่าง</p>`;
-    return;
-  }
+// 🔗 แสดงข้อความ AI
+function pushToChat(message){
+let chat = document.getElementById("chatResult")
 
-  const results = [];
+chat.innerHTML += `<div class="chat-message ai">${message}</div>`
 
-  diseases.forEach(d => {
-    const match = d.keywords.filter(k => text.includes(k));
-    if(match.length) results.push({...d, match});
-  });
-
-  if(!results.length){
-    html += `<p>❌ ไม่พบโรคที่ตรงกับอาการ</p>`;
-  }else{
-    results.forEach(r => {
-      html += `
-      <hr>
-      <p><b>โรคที่เป็นไปได้:</b> ${r.disease}</p>
-      <p><b>อาการที่ตรง:</b> ${r.match.join(", ")}</p>
-      <p><b>การดูแล:</b> ${r.care.join(", ")}</p>
-      <p><b>ความเสี่ยง:</b> ${r.risk.join(", ")}</p>
-      <p><b>อ้างอิง:</b> ${r.reference}</p>
-      `;
-    });
-  }
-
-  if(age >= 60){
-    html += `<p style="color:red"><b>⚠ ผู้สูงอายุควรเฝ้าระวังเป็นพิเศษ</b></p>`;
-  }
-
-  document.getElementById("result").innerHTML = html;
+chatHistory.push({role:"assistant",content:message})
+chat.scrollTop = chat.scrollHeight
 }
+
+// 🤖 AI ต่อ
+async function autoAskAI(summaryText){
+
+let chat = document.getElementById("chatResult")
+
+chat.innerHTML += `<div class="chat-message user">ช่วยอธิบายเพิ่มเติม</div>`
+
+chatHistory.push({
+role:"user",
+content: summaryText
+})
+
+let res = await fetch("http://127.0.0.1:8000/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+message: summaryText,
+history: chatHistory
+})
+})
+
+let data = await res.json()
+
+chat.innerHTML += `<div class="chat-message ai">${data.reply}</div>`
+
+chatHistory.push({role:"assistant",content:data.reply})
+chat.scrollTop = chat.scrollHeight
+}
+
+// 🔍 วิเคราะห์
+async function analyze(){
+
+let resultDiv = document.getElementById("result")
+
+let name = document.getElementById("name").value
+let age = parseInt(document.getElementById("age").value || 0)
+let gender = document.getElementById("gender").value
+let text = document.getElementById("symptoms").value
+
+let symptoms = text.split(",").map(s=>s.trim()).filter(s=>s)
+
+resultDiv.innerHTML = "⏳ กำลังวิเคราะห์..."
+
+try{
+
+let res = await fetch("http://127.0.0.1:8000/analyze",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({name,age,gender,symptoms})
+})
+
+let data = await res.json()
+
+let diagnosis = data.diagnosis || "-"
+let severity = data.severity || "-"
+let cause = data.cause || "ไม่มีข้อมูล"
+let advice = data.advice || "-"
+let care = data.care || []
+let refs = data.reference || []   // ✅ ใช้ reference
+
+// care
+let careList = care.length
+? "<ul>"+care.map(c=>`<li>${c}</li>`).join("")+"</ul>"
+: "-"
+
+// reference
+let refList = refs.length
+? "<ul>"+refs.map(r=>`<li>${r}</li>`).join("")+"</ul>"
+: "-"
+
+resultDiv.innerHTML = `
+<div class="result-box">
+<div class="result-container">
+
+<div class="card title">🧠 ผลวิเคราะห์</div>
+<div class="card disease">🦠 โรค: ${diagnosis}</div>
+<div class="card severity">⚠️ ระดับ: ${severity}</div>
+
+<div class="card cause">
+📌 สาเหตุ:
+<p>${cause}</p>
+</div>
+
+<div class="card advice">
+💊 คำแนะนำ:
+<p>${advice}</p>
+</div>
+
+<div class="card care">
+🏥 การดูแลเบื้องต้น:
+${careList}
+</div>
+
+<div class="card ref">
+📚 แหล่งอ้างอิง:
+${refList}
+</div>
+
+</div>
+</div>
+`
+
+summary = `
+โรค: ${diagnosis}
+ระดับ: ${severity}
+คำแนะนำ: ${advice}
+`
+
+pushToChat("🧠 ผลวิเคราะห์:\n" + summary)
+
+autoAskAI(summary)
+
+}catch(e){
+resultDiv.innerHTML = "❌ ERROR"
+}
+
+}
+
+// 💬 chat
+async function sendChat(){
+
+let input = document.getElementById("chatInput")
+let msg = input.value
+
+if(!msg) return
+
+let chat = document.getElementById("chatResult")
+
+chat.innerHTML += `<div class="chat-message user">${msg}</div>`
+
+chatHistory.push({role:"user",content:msg})
+
+input.value=""
+
+let res = await fetch("http://127.0.0.1:8000/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+message: msg,
+history: chatHistory
+})
+})
+
+let data = await res.json()
+
+chat.innerHTML += `<div class="chat-message ai">${data.reply}</div>`
+
+chatHistory.push({role:"assistant",content:data.reply})
+chat.scrollTop = chat.scrollHeight
+
+}
+
 </script>
+
 </body>
 </html>
